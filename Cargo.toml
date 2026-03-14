@@ -1,0 +1,17 @@
+[package]
+name = "nbody"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.60", features = ["derive"] }
+rand = "0.10.0"
+
+[build]
+rustflags = ["-C", "target-cpu=native"]
+
+[profile.dev]
+opt-level = 3
+
+[profile.release]
+opt-level = 3
