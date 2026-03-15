@@ -123,9 +123,9 @@ pub fn integrate<const NDIM: usize>(
         stepper_fn(sim_state, dt);
         sim_state.curr_time += dt;
     }
-    // let dt_end = total_time - sim_state.curr_time;
-    // stepper_fn(sim_state, dt_end);
-    // sim_state.curr_time += dt_end;
+    let dt_end = total_time - sim_state.curr_time;
+    stepper_fn(sim_state, dt_end);
+    sim_state.curr_time += dt_end;
 }
 
 // #[cfg(test)]
