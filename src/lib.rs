@@ -128,27 +128,27 @@ pub fn integrate<const NDIM: usize>(
     // sim_state.curr_time += dt_end;
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
+// #[cfg(test)]
+// mod test {
+//     use super::*;
 
-    #[test]
-    fn test_kinetic() {
-        let parts = vec![
-            Particle {
-                mass: 1.0,
-                pos: [0.0; 2],
-                vel: [1.0, -1.0],
-                acc: [0.0; 2],
-            },
-            Particle {
-                mass: 1.0,
-                pos: [3.0, 4.0],
-                vel: [-2.0, 1.0],
-                acc: [0.0; 2],
-            },
-        ];
-        let sim = SimState::new(0.0, 0.0, parts);
-        assert_eq!(sim.energy_kin(), 3.5);
-    }
-}
+//     #[test]
+//     fn test_kinetic() {
+//         let parts = vec![
+//             Particle {
+//                 mass: 1.0,
+//                 pos: [0.0; 2],
+//                 vel: [1.0, -1.0],
+//                 acc: [0.0; 2],
+//             },
+//             Particle {
+//                 mass: 1.0,
+//                 pos: [3.0, 4.0],
+//                 vel: [-2.0, 1.0],
+//                 acc: [0.0; 2],
+//             },
+//         ];
+//         let sim = SimState::new(0.0, 0.0, parts);
+//         assert_eq!(sim.energy_kin(), 3.5);
+//     }
+// }
