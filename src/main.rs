@@ -1,7 +1,7 @@
 use clap::Parser;
 use rand::prelude::*;
 
-use nbody::*;
+use nbody::{units::Units, *};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -28,7 +28,17 @@ fn main() {
         });
     }
 
-    let mut sim_state = SimState::new(particles, 1e-3);
+    let units = Units::new_kpc_msun_km_s();
+    println!(
+        "gravitational constant in sim units: {:.5e}",
+        units.grav_const()
+    );
+    println!(
+        "sim time unit in years: {:.5e}",
+        units.time_unit() / constants::YR_IN_S
+    );
+
+    let mut sim_state = SimState::new(particles, 1e-3, units);
     println!("total particles: {}", sim_state.particles.len());
 
     let ke = sim_state.energy_kin();

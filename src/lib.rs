@@ -1,7 +1,8 @@
 pub mod constants;
+pub mod units;
 pub mod vec;
 
-use crate::constants::*;
+use crate::units::*;
 use crate::vec::*;
 
 #[derive(Debug)]
@@ -26,32 +27,19 @@ impl<const NDIM: usize> Particle<NDIM> {
 pub struct SimState<const NDIM: usize> {
     pub curr_time: f64,
     pub softening: f64,
-    // units:
-    pub length_unit_m: f64,
-    pub mass_unit_kg: f64,
-    pub time_unit_s: f64,
-    pub grav_const: f64,
+    // units
+    pub units: Units,
     // list of particles
     pub particles: Vec<Particle<NDIM>>,
 }
 
 impl<const NDIM: usize> SimState<NDIM> {
-    pub fn new(particles: Vec<Particle<NDIM>>, softening: f64) -> Self {
+    pub fn new(particles: Vec<Particle<NDIM>>, softening: f64, units: Units) -> Self {
         let curr_time = 0.0;
-        // default units: kpc, Msun, km/s
-        let length_unit_m = MPC_IN_M / 1e3;
-        let mass_unit_kg = M_SUN;
-        let time_unit_s = length_unit_m / 1e3;
-        let grav_const = G_NEWTON * mass_unit_kg / length_unit_m.powi(3) * time_unit_s.powi(2);
-        println!("sim time unit in yrs: {:.5e}", time_unit_s / YR_IN_S);
-        println!("grav constant in sim units: {grav_const:.5e}");
         Self {
             curr_time,
             softening,
-            length_unit_m,
-            mass_unit_kg,
-            time_unit_s,
-            grav_const,
+            units,
             particles,
         }
     }
@@ -69,7 +57,9 @@ impl<const NDIM: usize> SimState<NDIM> {
         for i in 0..self.particles.len() {
             for j in i + 1..self.particles.len() {
                 let dist = norm(self.particles[i].rvec(&self.particles[j]));
-                tot_pot -= self.grav_const * self.particles[i].mass * self.particles[j].mass / dist;
+                tot_pot -=
+                    self.units.grav_const() * self.particles[i].mass * self.particles[j].mass
+                        / dist;
             }
         }
         tot_pot
@@ -87,7 +77,7 @@ impl<const NDIM: usize> SimState<NDIM> {
             for j in i + 1..self.particles.len() {
                 let rvec = self.particles[i].rvec(&self.particles[j]);
                 let dist2 = norm2(rvec) + self.softening * self.softening;
-                let force = rvec.map(|x| -self.grav_const * x / dist2 / dist2.sqrt());
+                let force = rvec.map(|x| -self.units.grav_const() * x / dist2 / dist2.sqrt());
                 for d in 0..NDIM {
                     self.particles[i].acc[d] += force[d] * self.particles[j].mass;
                     self.particles[j].acc[d] -= force[d] * self.particles[i].mass;
