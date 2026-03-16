@@ -1,7 +1,7 @@
 use clap::Parser;
 use rand::prelude::*;
 
-use nbody::{units::Units, *};
+use nbody::{integrators, integrators::integrate, units::Units, *};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -50,7 +50,7 @@ fn main() {
         pe
     );
 
-    integrate(&mut sim_state, 5.0, 1e-3, &step_leapfrog);
+    integrate(&mut sim_state, 10.0, 1e-3, &integrators::step_leapfrog);
 
     let ke = sim_state.energy_kin();
     let pe = sim_state.energy_pot();

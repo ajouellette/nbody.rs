@@ -1,8 +1,9 @@
 pub mod constants;
+pub mod integrators;
 pub mod units;
 pub mod vec;
 
-use crate::units::*;
+use crate::units::Units;
 use crate::vec::*;
 
 #[derive(Debug)]
@@ -86,78 +87,3 @@ impl<const NDIM: usize> SimState<NDIM> {
         }
     }
 }
-
-pub fn step_euler<const NDIM: usize>(sim_state: &mut SimState<NDIM>, dt: f64) {
-    for i in 0..sim_state.particles.len() {
-        for d in 0..NDIM {
-            sim_state.particles[i].pos[d] += sim_state.particles[i].vel[d] * dt;
-        }
-    }
-    sim_state.accelerate();
-    for i in 0..sim_state.particles.len() {
-        for d in 0..NDIM {
-            sim_state.particles[i].vel[d] += sim_state.particles[i].acc[d] * dt;
-        }
-    }
-}
-
-pub fn step_leapfrog<const NDIM: usize>(sim_state: &mut SimState<NDIM>, dt: f64) {
-    for i in 0..sim_state.particles.len() {
-        // kick
-        for d in 0..NDIM {
-            sim_state.particles[i].vel[d] += sim_state.particles[i].acc[d] * dt / 2.0;
-        }
-        // drift
-        for d in 0..NDIM {
-            sim_state.particles[i].pos[d] += sim_state.particles[i].vel[d] * dt;
-        }
-    }
-    sim_state.accelerate();
-    for i in 0..sim_state.particles.len() {
-        // kick
-        for d in 0..NDIM {
-            sim_state.particles[i].vel[d] += sim_state.particles[i].acc[d] * dt / 2.0;
-        }
-    }
-}
-
-pub fn integrate<const NDIM: usize>(
-    sim_state: &mut SimState<NDIM>,
-    total_time: f64,
-    dt: f64,
-    stepper_fn: &dyn Fn(&mut SimState<NDIM>, f64),
-) {
-    sim_state.accelerate();
-    while sim_state.curr_time + dt <= total_time {
-        stepper_fn(sim_state, dt);
-        sim_state.curr_time += dt;
-    }
-    let dt_end = total_time - sim_state.curr_time;
-    stepper_fn(sim_state, dt_end);
-    sim_state.curr_time += dt_end;
-}
-
-// #[cfg(test)]
-// mod test {
-//     use super::*;
-
-//     #[test]
-//     fn test_kinetic() {
-//         let parts = vec![
-//             Particle {
-//                 mass: 1.0,
-//                 pos: [0.0; 2],
-//                 vel: [1.0, -1.0],
-//                 acc: [0.0; 2],
-//             },
-//             Particle {
-//                 mass: 1.0,
-//                 pos: [3.0, 4.0],
-//                 vel: [-2.0, 1.0],
-//                 acc: [0.0; 2],
-//             },
-//         ];
-//         let sim = SimState::new(0.0, 0.0, parts);
-//         assert_eq!(sim.energy_kin(), 3.5);
-//     }
-// }
