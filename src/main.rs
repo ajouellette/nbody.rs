@@ -50,7 +50,7 @@ fn main() {
         pe
     );
 
-    integrate(&mut sim_state, 10.0, 1e-3, &integrators::step_leapfrog);
+    integrate(&mut sim_state, 10.0, 1e-3, integrators::step_leapfrog);
 
     let ke = sim_state.energy_kin();
     let pe = sim_state.energy_pot();
