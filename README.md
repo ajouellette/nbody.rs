@@ -4,9 +4,9 @@ nbody.rs
 Learn Rust by writing a simple N-body simulation code.
 
 ## Inspirations
-- [GADGET](https://wwwmpa.mpa-garching.mpg.de/gadget4/) - Perhaps the most well known cosmological N-body simulation codes.
+- [GADGET](https://wwwmpa.mpa-garching.mpg.de/gadget4/) - Perhaps the most well known cosmological N-body simulation codes, written mainly by Volker Springel.
 - [The Art of Computational Science](http://www.artcompsci.org/) by Piet Hut and Jun Makino
-- [nbody-python](https://github.com/pmocz/nbody-python) - A very simple N-body simulation code in Python.
+- [nbody-python](https://github.com/pmocz/nbody-python) - A very simple N-body simulation code in Python, written by Philip Mocz.
 
 ## Implemented features
 - [x] Working simulation using leapfrog or Euler integration
