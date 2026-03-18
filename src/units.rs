@@ -5,32 +5,31 @@ pub struct Units {
     length_unit: f64,
     mass_unit: f64,
     vel_unit: f64,
+    grav_const: f64,
 }
 
 impl Units {
-    pub fn new() -> Self {
+    pub fn new(length_unit: f64, mass_unit: f64, vel_unit: f64) -> Self {
+        let grav_const = G_NEWTON * mass_unit / (length_unit * vel_unit.powi(2));
         Self {
-            length_unit: 1.0,
-            mass_unit: 1.0,
-            vel_unit: 1.0,
+            length_unit,
+            mass_unit,
+            vel_unit,
+            grav_const,
         }
     }
 
+    pub fn new_si() -> Self {
+        Self::new(1.0, 1.0, 1.0)
+    }
+
     pub fn new_kpc_msun_km_s() -> Self {
-        Self {
-            length_unit: MPC_IN_M / 1e3,
-            mass_unit: M_SUN,
-            vel_unit: 1e3,
-        }
+        Self::new(MPC_IN_M / 1e3, M_SUN, 1e3)
     }
 
     // Default units for GADGET simulations
     pub fn new_gadget_default() -> Self {
-        Self {
-            length_unit: MPC_IN_M / 1e3,
-            mass_unit: 1e10 * M_SUN,
-            vel_unit: 1e3,
-        }
+        Self::new(MPC_IN_M / 1e3, 1e10 * M_SUN, 1e3)
     }
 
     pub fn length_unit(&self) -> f64 {
@@ -45,13 +44,12 @@ impl Units {
         self.vel_unit
     }
 
-    // TODO: make these functions compute results only once
     pub fn time_unit(&self) -> f64 {
         self.length_unit / self.vel_unit
     }
 
     pub fn grav_const(&self) -> f64 {
-        G_NEWTON * self.mass_unit / self.length_unit.powi(3) * self.time_unit().powi(2)
+        self.grav_const
     }
 
     // functions to convert key quantities
@@ -62,8 +60,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_units() {
-        let units = Units::new();
+    fn test_units_si() {
+        let units = Units::new_si();
         assert_eq!(units.length_unit(), 1.0);
         assert_eq!(units.mass_unit(), 1.0);
         assert_eq!(units.vel_unit(), 1.0);
