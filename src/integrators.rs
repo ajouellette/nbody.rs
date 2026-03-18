@@ -38,7 +38,7 @@ pub fn integrate<const NDIM: usize>(
     sim_state: &mut SimState<NDIM>,
     total_time: f64,
     dt: f64,
-    stepper_fn: &dyn Fn(&mut SimState<NDIM>, f64),
+    stepper_fn: impl Fn(&mut SimState<NDIM>, f64),
 ) {
     sim_state.accelerate();
     while sim_state.curr_time + dt <= total_time {
