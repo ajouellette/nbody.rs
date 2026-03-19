@@ -6,6 +6,7 @@ pub mod vec;
 use crate::units::Units;
 use crate::vec::*;
 
+/// A simulation particle in `NDIM`-dimensional space.
 #[derive(Debug)]
 pub struct Particle<const NDIM: usize> {
     pub mass: f64,
@@ -15,6 +16,7 @@ pub struct Particle<const NDIM: usize> {
 }
 
 impl<const NDIM: usize> Particle<NDIM> {
+    /// Get the position vector to this particle from another.
     pub fn rvec(&self, other: &Self) -> NdVec<NDIM> {
         let mut res: NdVec<NDIM> = [0.0; NDIM];
         for d in 0..NDIM {
@@ -24,17 +26,22 @@ impl<const NDIM: usize> Particle<NDIM> {
     }
 }
 
+/// Current simulation state.
+/// Stores all information needed to start or resume a simulation.
 #[derive(Debug)]
 pub struct SimState<const NDIM: usize> {
+    /// Current simulation time.
     pub curr_time: f64,
+    /// Softening length for gravitational interactions.
     pub softening: f64,
-    // units
+    /// Simulation units.
     pub units: Units,
-    // list of particles
+    /// List of particles in the simulation.
     pub particles: Vec<Particle<NDIM>>,
 }
 
 impl<const NDIM: usize> SimState<NDIM> {
+    /// Setup a new simulation state with the given particles, softening length, and units.
     pub fn new(particles: Vec<Particle<NDIM>>, softening: f64, units: Units) -> Self {
         let curr_time = 0.0;
         Self {
@@ -45,6 +52,7 @@ impl<const NDIM: usize> SimState<NDIM> {
         }
     }
 
+    /// Compute the current kinetic energy of the system.
     pub fn energy_kin(&self) -> f64 {
         0.5 * self
             .particles
@@ -53,6 +61,7 @@ impl<const NDIM: usize> SimState<NDIM> {
             .sum::<f64>()
     }
 
+    /// Compute the current potential energy of the system.
     pub fn energy_pot(&self) -> f64 {
         let mut tot_pot: f64 = 0.0;
         for i in 0..self.particles.len() {
@@ -70,6 +79,7 @@ impl<const NDIM: usize> SimState<NDIM> {
     //     let total_mass: f64 = self.particles.iter().map(|p| p.mass).sum();
     // }
 
+    /// Brute-force update all of the particle accelerations in the system.
     pub fn accelerate(&mut self) {
         for p in self.particles.iter_mut() {
             p.acc = [0.0; NDIM];
