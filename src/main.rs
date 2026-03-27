@@ -41,6 +41,8 @@ fn main() {
     let mut sim_state = SimState::new(particles, 1e-3, units);
     println!("total particles: {}", sim_state.particles.len());
 
+    let com = sim_state.center_of_mass();
+    println!("center of mass: {:?}", com);
     let ke = sim_state.energy_kin();
     let pe = sim_state.energy_pot();
     println!(
@@ -52,6 +54,9 @@ fn main() {
 
     integrate(&mut sim_state, 10.0, 1e-3, integrators::step_leapfrog);
 
+    println!("after integration:");
+    let com = sim_state.center_of_mass();
+    println!("center of mass: {:?}", com);
     let ke = sim_state.energy_kin();
     let pe = sim_state.energy_pot();
     println!(

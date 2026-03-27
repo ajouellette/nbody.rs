@@ -75,9 +75,18 @@ impl<const NDIM: usize> SimState<NDIM> {
         tot_pot
     }
 
-    // fn center_of_mass(&self) -> NdVec<NDIM> {
-    //     let total_mass: f64 = self.particles.iter().map(|p| p.mass).sum();
-    // }
+    /// Compute center of mass of the system.
+    pub fn center_of_mass(&self) -> NdVec<NDIM> {
+        let total_mass: f64 = self.particles.iter().map(|p| p.mass).sum();
+        let mut com: NdVec<NDIM> = [0.0; NDIM];
+        for p in self.particles.iter() {
+            let frac_mass = p.mass / total_mass;
+            for d in 0..NDIM {
+                com[d] += frac_mass * p.pos[d];
+            }
+        }
+        com
+    }
 
     /// Brute-force update all of the particle accelerations in the system.
     pub fn accelerate(&mut self) {
