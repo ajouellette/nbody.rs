@@ -14,7 +14,7 @@ fn main() {
     let args = Args::parse();
 
     const NDIM: usize = 3;
-    let nparts = 200;
+    let nparts = 400;
 
     // random initial conditions
     let mut particles = Vec::<Particle<NDIM>>::with_capacity(nparts);

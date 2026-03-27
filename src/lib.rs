@@ -85,11 +85,13 @@ impl<const NDIM: usize> SimState<NDIM> {
             p.acc = [0.0; NDIM];
         }
         let eps2 = self.softening * self.softening;
-        for i in 0..self.particles.len() {
-            for j in i + 1..self.particles.len() {
+        let n = self.particles.len();
+        for i in 0..n {
+            for j in i + 1..n {
                 let rvec = self.particles[i].rvec(&self.particles[j]);
-                let dist2 = norm2(rvec) + eps2;
-                let force = rvec.map(|x| -self.units.grav_const() * x / dist2 / dist2.sqrt());
+                let dist3_2 = norm2(rvec) + eps2;
+                let dist3_2 = dist3_2 * dist3_2.sqrt();
+                let force = rvec.map(|x| -self.units.grav_const() * x / dist3_2);
                 for d in 0..NDIM {
                     self.particles[i].acc[d] += force[d] * self.particles[j].mass;
                     self.particles[j].acc[d] -= force[d] * self.particles[i].mass;
